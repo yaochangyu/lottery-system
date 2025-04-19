@@ -74,7 +74,7 @@ public class DrawManager
             Console.WriteLine("\n=== 獎項列表 ===");
             foreach (var prize in selectedEvent.Prizes)
             {
-                Console.WriteLine($"{prize.PrizeId}. {prize.PrizeName} (剩餘: {prize.RemainingQuantity}/{prize.TotalQuantity})");
+                Console.WriteLine($"{prize.Id}. {prize.Name} (剩餘: {prize.RemainingQuantity}/{prize.TotalQuantity})");
             }
 
             Console.Write("請選擇獎項代碼: ");
@@ -85,7 +85,7 @@ public class DrawManager
                 continue;
             }
 
-            var selectedPrize = selectedEvent.Prizes.FirstOrDefault(p => p.PrizeId == prizeId);
+            var selectedPrize = selectedEvent.Prizes.FirstOrDefault(p => p.Id == prizeId);
             if (selectedPrize == null)
             {
                 Console.WriteLine("找不到指定的獎項");
@@ -137,9 +137,15 @@ public class DrawManager
                 selectedEvent.AddWin(winner);
             }
 
-            selectedPrize.RemainingQuantity -= drawCount;
+            // 使用 SubtractRemainingQuantity 方法替代直接修改 RemainingQuantity 屬性
+            bool subtractSuccess = selectedPrize.SubtractRemainingQuantity(drawCount);
+            if (!subtractSuccess)
+            {
+                Console.WriteLine("減少獎品數量失敗，請檢查剩餘數量");
+                continue;
+            }
 
-            Console.WriteLine($"\n獎項 {selectedPrize.PrizeName} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
+            Console.WriteLine($"\n獎項 {selectedPrize.Name} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
 
             Console.Write("\n是否要繼續抽獎？(Y/N): ");
             if (Console.ReadLine()?.ToUpper() != "Y")
