@@ -1,3 +1,7 @@
+using LotterySystem.Rule;
+
+namespace LotterySystem;
+
 /// <summary>
 /// 管理員類別，負責管理活動、獎項和參與者
 /// </summary>
@@ -114,4 +118,4 @@ public class AdminManager
         }
         ImportParticipants("EV001", participants);
     }
-} 
+}

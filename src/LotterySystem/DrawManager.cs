@@ -1,3 +1,7 @@
+using LotterySystem.Rule;
+
+namespace LotterySystem;
+
 /// <summary>
 /// 抽獎管理類別，負責處理抽獎相關的操作
 /// </summary>
@@ -144,4 +148,4 @@ public class DrawManager
             }
         }
     }
-} 
+}

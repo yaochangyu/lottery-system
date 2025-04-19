@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System;
+namespace LotterySystem.Rule;
 
 /// <summary>
 /// 基於中獎次數的抽獎規則實現

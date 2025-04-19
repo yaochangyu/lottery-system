@@ -1,3 +1,7 @@
+using LotterySystem.Rule;
+
+namespace LotterySystem;
+
 /// <summary>
 /// 抽獎活動類別，代表一個抽獎活動
 /// </summary>
@@ -88,4 +92,4 @@ public class Event
     {
         participant.AddWin();
     }
-} 
+}

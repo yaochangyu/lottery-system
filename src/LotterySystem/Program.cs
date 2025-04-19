@@ -1,3 +1,7 @@
+using LotterySystem.Rule;
+
+namespace LotterySystem;
+
 class Program
 {
     static void Main(string[] args)
@@ -140,4 +144,4 @@ class Program
         // 這裡可以實作從檔案匯入名單的功能
         Console.WriteLine("名單匯入功能尚未實作");
     }
-} 
+}

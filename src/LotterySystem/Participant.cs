@@ -1,3 +1,5 @@
+namespace LotterySystem;
+
 /// <summary>
 /// 參與者類別，代表抽獎活動的參與者
 /// </summary>
@@ -44,4 +46,4 @@ public class Participant
     {
         WinCount++;
     }
-} 
+}

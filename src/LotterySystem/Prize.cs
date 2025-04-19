@@ -1,3 +1,5 @@
+namespace LotterySystem;
+
 public class Prize
 {
     public string PrizeId { get; set; }
@@ -14,4 +16,4 @@ public class Prize
         RemainingQuantity = totalQuantity;
         ImagePath = imagePath;
     }
-} 
+}
