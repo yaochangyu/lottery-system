@@ -3,7 +3,7 @@ using LotterySystem.Rule;
 namespace LotterySystem;
 
 /// <summary>
-/// 抽獎管理類別，負責處理抽獎相關的操作
+/// 抽獎管理類別，負責處理抽獎相關的用戶界面互動
 /// </summary>
 public class DrawManager
 {
@@ -13,17 +13,19 @@ public class DrawManager
     private AdminManager adminManager;
 
     /// <summary>
-    /// 隨機數生成器，用於抽獎
+    /// 抽獎服務實例，用於處理抽獎核心邏輯
     /// </summary>
-    private Random random = new Random();
+    private LotteryService lotteryService;
 
     /// <summary>
     /// 初始化抽獎管理器
     /// </summary>
     /// <param name="adminManager">管理員實例</param>
-    public DrawManager(AdminManager adminManager)
+    /// <param name="lotteryService">抽獎服務實例</param>
+    public DrawManager(AdminManager adminManager, LotteryService lotteryService)
     {
         this.adminManager = adminManager;
+        this.lotteryService = lotteryService;
     }
 
     /// <summary>
@@ -64,7 +66,7 @@ public class DrawManager
     }
 
     /// <summary>
-    /// 執行抽獎流程
+    /// 執行抽獎流程的用戶界面互動
     /// </summary>
     /// <param name="selectedEvent">選中的活動</param>
     private void DrawProcess(Event selectedEvent)
@@ -112,11 +114,11 @@ public class DrawManager
             }
 
             // 檢查是否有足夠的合格參與者
-            var eligibleParticipants = selectedEvent.GetEligibleParticipants();
+            int eligibleCount = lotteryService.CheckEligibleParticipantsCount(selectedEvent);
 
-            if (eligibleParticipants.Count < drawCount)
+            if (eligibleCount < drawCount)
             {
-                Console.WriteLine($"警告：只有 {eligibleParticipants.Count} 位參與者符合抽獎資格");
+                Console.WriteLine($"警告：只有 {eligibleCount} 位參與者符合抽獎資格");
                 Console.Write("是否要繼續抽獎？(Y/N): ");
                 if (Console.ReadLine()?.ToUpper() != "Y")
                 {
@@ -124,28 +126,24 @@ public class DrawManager
                 }
             }
 
-            // 執行抽獎
-            var winners = eligibleParticipants
-                .OrderBy(x => random.Next())
-                .Take(drawCount)
-                .ToList();
-
-            Console.WriteLine("\n=== 中獎名單 ===");
-            foreach (var winner in winners)
+            try
             {
-                Console.WriteLine($"履歷編號: {winner.Id}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount + 1}");
-                selectedEvent.AddWin(winner);
+                // 執行抽獎
+                var winners = lotteryService.Draw(selectedEvent, selectedPrize, drawCount);
+
+                Console.WriteLine("\n=== 中獎名單 ===");
+                foreach (var winner in winners)
+                {
+                    Console.WriteLine($"履歷編號: {winner.Id}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount}");
+                }
+
+                Console.WriteLine($"\n獎項 {selectedPrize.Name} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
             }
-
-            // 使用 SubtractRemainingQuantity 方法替代直接修改 RemainingQuantity 屬性
-            bool subtractSuccess = selectedPrize.SubtractRemainingQuantity(drawCount);
-            if (!subtractSuccess)
+            catch (Exception ex)
             {
-                Console.WriteLine("減少獎品數量失敗，請檢查剩餘數量");
+                Console.WriteLine($"抽獎失敗: {ex.Message}");
                 continue;
             }
-
-            Console.WriteLine($"\n獎項 {selectedPrize.Name} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
 
             Console.Write("\n是否要繼續抽獎？(Y/N): ");
             if (Console.ReadLine()?.ToUpper() != "Y")
