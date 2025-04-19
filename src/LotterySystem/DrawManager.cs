@@ -1,13 +1,30 @@
+/// <summary>
+/// 抽獎管理類別，負責處理抽獎相關的操作
+/// </summary>
 public class DrawManager
 {
+    /// <summary>
+    /// 管理員實例，用於獲取活動和獎項信息
+    /// </summary>
     private AdminManager adminManager;
+
+    /// <summary>
+    /// 隨機數生成器，用於抽獎
+    /// </summary>
     private Random random = new Random();
 
+    /// <summary>
+    /// 初始化抽獎管理器
+    /// </summary>
+    /// <param name="adminManager">管理員實例</param>
     public DrawManager(AdminManager adminManager)
     {
         this.adminManager = adminManager;
     }
 
+    /// <summary>
+    /// 開始抽獎流程
+    /// </summary>
     public void StartDraw()
     {
         var events = adminManager.GetAllEvents();
@@ -20,7 +37,15 @@ public class DrawManager
         Console.WriteLine("\n可選擇的活動：");
         for (int i = 0; i < events.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {events[i].EventCode} - {events[i].EventName} (每人最多中獎{events[i].MaxWinCount}次)");
+            var eventInfo = events[i];
+            var rule = eventInfo.LotteryRule;
+            string ruleDescription = rule switch
+            {
+                WinCountRule wcr => $"每人最多中獎{wcr.MaxWinCount}次",
+                WinCountAndAgeRule wcar => $"每人最多中獎{wcar.MaxWinCount}次，年齡限制{wcar.MinAge}-{wcar.MaxAge}歲",
+                _ => "未知規則"
+            };
+            Console.WriteLine($"{i + 1}. {eventInfo.EventCode} - {eventInfo.EventName} ({ruleDescription})");
         }
 
         Console.Write("請選擇活動編號: ");
@@ -34,6 +59,10 @@ public class DrawManager
         DrawProcess(selectedEvent);
     }
 
+    /// <summary>
+    /// 執行抽獎流程
+    /// </summary>
+    /// <param name="selectedEvent">選中的活動</param>
     private void DrawProcess(Event selectedEvent)
     {
         while (true)
@@ -79,13 +108,11 @@ public class DrawManager
             }
 
             // 檢查是否有足夠的合格參與者
-            var eligibleParticipants = selectedEvent.Participants
-                .Where(p => selectedEvent.CanParticipantWin(p))
-                .ToList();
+            var eligibleParticipants = selectedEvent.GetEligibleParticipants();
 
             if (eligibleParticipants.Count < drawCount)
             {
-                Console.WriteLine($"警告：只有 {eligibleParticipants.Count} 位參與者符合抽獎資格（每人最多中獎{selectedEvent.MaxWinCount}次）");
+                Console.WriteLine($"警告：只有 {eligibleParticipants.Count} 位參與者符合抽獎資格");
                 Console.Write("是否要繼續抽獎？(Y/N): ");
                 if (Console.ReadLine()?.ToUpper() != "Y")
                 {
@@ -102,8 +129,8 @@ public class DrawManager
             Console.WriteLine("\n=== 中獎名單 ===");
             foreach (var winner in winners)
             {
-                Console.WriteLine($"履歷編號: {winner.ResumeId}, 姓名: {winner.Name}, 已中獎次數: {winner.WinCount + 1}");
-                winner.AddWin();
+                Console.WriteLine($"履歷編號: {winner.ResumeId}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {selectedEvent.GetWinCount(winner) + 1}");
+                selectedEvent.AddWin(winner);
             }
 
             selectedPrize.RemainingQuantity -= drawCount;

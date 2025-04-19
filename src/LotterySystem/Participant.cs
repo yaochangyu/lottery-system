@@ -1,18 +1,33 @@
+/// <summary>
+/// 參與者類別，代表抽獎活動的參與者
+/// </summary>
 public class Participant
 {
+    /// <summary>
+    /// 參與者的履歷編號，作為唯一識別碼
+    /// </summary>
     public int ResumeId { get; set; }
-    public string Name { get; set; }
-    public int WinCount { get; set; }
 
-    public Participant(int resumeId, string name)
+    /// <summary>
+    /// 參與者的姓名
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// 參與者的年齡
+    /// </summary>
+    public int Age { get; set; }
+
+    /// <summary>
+    /// 初始化參與者實例
+    /// </summary>
+    /// <param name="resumeId">履歷編號</param>
+    /// <param name="name">姓名</param>
+    /// <param name="age">年齡</param>
+    public Participant(int resumeId, string name, int age)
     {
         ResumeId = resumeId;
         Name = name;
-        WinCount = 0;
-    }
-
-    public void AddWin()
-    {
-        WinCount++;
+        Age = age;
     }
 } 
