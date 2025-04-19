@@ -29,11 +29,6 @@ public class Event
     public ILotteryRule LotteryRule { get; private set; }
 
     /// <summary>
-    /// 參與者中獎記錄字典，用於追蹤每個參與者的中獎情況
-    /// </summary>
-    private Dictionary<int, ParticipantWinRecord> winRecords;
-
-    /// <summary>
     /// 初始化抽獎活動
     /// </summary>
     /// <param name="eventCode">活動代碼</param>
@@ -46,7 +41,6 @@ public class Event
         LotteryRule = lotteryRule;
         Prizes = new List<Prize>();
         Participants = new List<Participant>();
-        winRecords = new Dictionary<int, ParticipantWinRecord>();
     }
 
     /// <summary>
@@ -65,7 +59,6 @@ public class Event
     public void AddParticipant(Participant participant)
     {
         Participants.Add(participant);
-        winRecords[participant.ResumeId] = new ParticipantWinRecord(participant);
     }
 
     /// <summary>
@@ -75,7 +68,7 @@ public class Event
     /// <returns>如果參與者符合中獎資格則返回 true，否則返回 false</returns>
     public bool CanParticipantWin(Participant participant)
     {
-        return LotteryRule.CanParticipantWin(participant, GetWinCount(participant));
+        return LotteryRule.CanParticipantWin(participant, participant.WinCount);
     }
 
     /// <summary>
@@ -88,28 +81,11 @@ public class Event
     }
 
     /// <summary>
-    /// 獲取參與者在當前活動中的中獎次數
-    /// </summary>
-    /// <param name="participant">參與者實例</param>
-    /// <returns>參與者的中獎次數</returns>
-    public int GetWinCount(Participant participant)
-    {
-        if (winRecords.TryGetValue(participant.ResumeId, out var record))
-        {
-            return record.WinCount;
-        }
-        return 0;
-    }
-
-    /// <summary>
     /// 增加參與者的中獎次數
     /// </summary>
     /// <param name="participant">參與者實例</param>
     public void AddWin(Participant participant)
     {
-        if (winRecords.TryGetValue(participant.ResumeId, out var record))
-        {
-            record.AddWin();
-        }
+        participant.AddWin();
     }
 } 

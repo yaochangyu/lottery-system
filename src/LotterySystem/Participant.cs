@@ -19,6 +19,11 @@ public class Participant
     public int Age { get; set; }
 
     /// <summary>
+    /// 參與者的中獎次數
+    /// </summary>
+    public int WinCount { get; private set; }
+
+    /// <summary>
     /// 初始化參與者實例
     /// </summary>
     /// <param name="resumeId">履歷編號</param>
@@ -29,5 +34,14 @@ public class Participant
         ResumeId = resumeId;
         Name = name;
         Age = age;
+        WinCount = 0;
+    }
+
+    /// <summary>
+    /// 增加參與者的中獎次數
+    /// </summary>
+    public void AddWin()
+    {
+        WinCount++;
     }
 } 

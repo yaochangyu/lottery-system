@@ -129,7 +129,7 @@ public class DrawManager
             Console.WriteLine("\n=== 中獎名單 ===");
             foreach (var winner in winners)
             {
-                Console.WriteLine($"履歷編號: {winner.ResumeId}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {selectedEvent.GetWinCount(winner) + 1}");
+                Console.WriteLine($"履歷編號: {winner.ResumeId}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount + 1}");
                 selectedEvent.AddWin(winner);
             }
 
