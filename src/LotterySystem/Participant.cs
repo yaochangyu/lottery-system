@@ -6,7 +6,7 @@ public class Participant
     /// <summary>
     /// 參與者的履歷編號，作為唯一識別碼
     /// </summary>
-    public int ResumeId { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// 參與者的姓名
@@ -31,7 +31,7 @@ public class Participant
     /// <param name="age">年齡</param>
     public Participant(int resumeId, string name, int age)
     {
-        ResumeId = resumeId;
+        Id = resumeId;
         Name = name;
         Age = age;
         WinCount = 0;

@@ -45,7 +45,7 @@ public class DrawManager
                 WinCountAndAgeRule wcar => $"每人最多中獎{wcar.MaxWinCount}次，年齡限制{wcar.MinAge}-{wcar.MaxAge}歲",
                 _ => "未知規則"
             };
-            Console.WriteLine($"{i + 1}. {eventInfo.EventCode} - {eventInfo.EventName} ({ruleDescription})");
+            Console.WriteLine($"{i + 1}. {eventInfo.Id} - {eventInfo.Name} ({ruleDescription})");
         }
 
         Console.Write("請選擇活動編號: ");
@@ -129,7 +129,7 @@ public class DrawManager
             Console.WriteLine("\n=== 中獎名單 ===");
             foreach (var winner in winners)
             {
-                Console.WriteLine($"履歷編號: {winner.ResumeId}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount + 1}");
+                Console.WriteLine($"履歷編號: {winner.Id}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount + 1}");
                 selectedEvent.AddWin(winner);
             }
 

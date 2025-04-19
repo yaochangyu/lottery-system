@@ -6,12 +6,12 @@ public class Event
     /// <summary>
     /// 活動代碼，作為活動的唯一識別碼
     /// </summary>
-    public string EventCode { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// 活動名稱
     /// </summary>
-    public string EventName { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// 活動的獎項列表
@@ -36,8 +36,8 @@ public class Event
     /// <param name="lotteryRule">中獎規則</param>
     public Event(string eventCode, string eventName, ILotteryRule lotteryRule)
     {
-        EventCode = eventCode;
-        EventName = eventName;
+        Id = eventCode;
+        Name = eventName;
         LotteryRule = lotteryRule;
         Prizes = new List<Prize>();
         Participants = new List<Participant>();
@@ -68,7 +68,7 @@ public class Event
     /// <returns>如果參與者符合中獎資格則返回 true，否則返回 false</returns>
     public bool CanParticipantWin(Participant participant)
     {
-        return LotteryRule.CanParticipantWin(participant, participant.WinCount);
+        return LotteryRule.CanWin(participant);
     }
 
     /// <summary>

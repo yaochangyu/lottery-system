@@ -22,7 +22,7 @@ public class AdminManager
     /// <exception cref="Exception">當活動代碼已存在時拋出異常</exception>
     public void CreateEvent(string eventCode, string eventName, ILotteryRule lotteryRule)
     {
-        if (events.Any(e => e.EventCode == eventCode))
+        if (events.Any(e => e.Id == eventCode))
         {
             throw new Exception("活動代碼已存在");
         }
@@ -39,7 +39,7 @@ public class AdminManager
     /// <exception cref="Exception">當找不到指定的活動時拋出異常</exception>
     public void ImportPrizes(string eventCode, List<Prize> prizes)
     {
-        var targetEvent = events.FirstOrDefault(e => e.EventCode == eventCode);
+        var targetEvent = events.FirstOrDefault(e => e.Id == eventCode);
         if (targetEvent == null)
         {
             throw new Exception("找不到指定的活動");
@@ -59,7 +59,7 @@ public class AdminManager
     /// <exception cref="Exception">當找不到指定的活動時拋出異常</exception>
     public void ImportParticipants(string eventCode, List<Participant> participants)
     {
-        var targetEvent = events.FirstOrDefault(e => e.EventCode == eventCode);
+        var targetEvent = events.FirstOrDefault(e => e.Id == eventCode);
         if (targetEvent == null)
         {
             throw new Exception("找不到指定的活動");
