@@ -100,52 +100,84 @@ public class LotteryConsoleUI
                 continue;
             }
 
-            Console.Write("請輸入要抽取的數量: ");
-            if (!int.TryParse(Console.ReadLine(), out int drawCount) || drawCount <= 0)
+            // 新增：詢問是否要繼續抽同一個獎項的迴圈
+            bool continueSamePrize = true;
+            int lastDrawCount = 0;
+            while (continueSamePrize && selectedPrize.RemainingQuantity > 0)
             {
-                Console.WriteLine("無效的數量");
-                continue;
-            }
-
-            if (drawCount > selectedPrize.RemainingQuantity)
-            {
-                Console.WriteLine("抽取數量超過剩餘獎項數量");
-                continue;
-            }
-
-            // 檢查是否有足夠的合格參與者
-            int eligibleCount = lotteryService.CheckEligibleParticipantsCount(selectedEvent);
-
-            if (eligibleCount < drawCount)
-            {
-                Console.WriteLine($"警告：只有 {eligibleCount} 位參與者符合抽獎資格");
-                Console.Write("是否要繼續抽獎？(Y/N): ");
-                if (Console.ReadLine()?.ToUpper() != "Y")
+                int drawCount;
+                if (lastDrawCount == 0)
                 {
+                    // 第一次抽獎時詢問數量
+                    Console.Write("請輸入要抽取的數量: ");
+                    if (!int.TryParse(Console.ReadLine(), out drawCount) || drawCount <= 0)
+                    {
+                        Console.WriteLine("無效的數量");
+                        continue;
+                    }
+                }
+                else
+                {
+                    // 繼續抽同一個獎項時使用上一次的數量
+                    drawCount = lastDrawCount;
+                    Console.WriteLine($"使用上一次的抽取數量: {drawCount}");
+                }
+
+                if (drawCount > selectedPrize.RemainingQuantity)
+                {
+                    Console.WriteLine("抽取數量超過剩餘獎項數量");
+                    continue;
+                }
+
+                // 檢查是否有足夠的合格參與者
+                int eligibleCount = lotteryService.CheckEligibleParticipantsCount(selectedEvent);
+
+                if (eligibleCount < drawCount)
+                {
+                    Console.WriteLine($"警告：只有 {eligibleCount} 位參與者符合抽獎資格");
+                    Console.Write("是否要繼續抽獎？(Y/N): ");
+                    if (Console.ReadLine()?.ToUpper() != "Y")
+                    {
+                        continue;
+                    }
+                }
+
+                try
+                {
+                    // 執行抽獎
+                    var winners = lotteryService.Draw(selectedEvent, selectedPrize, drawCount);
+
+                    Console.WriteLine("\n=== 中獎名單 ===");
+                    foreach (var winner in winners)
+                    {
+                        Console.WriteLine($"履歷編號: {winner.Id}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount}");
+                    }
+
+                    Console.WriteLine($"\n獎項 {selectedPrize.Name} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
+
+                    // 保存這次的抽獎數量
+                    lastDrawCount = drawCount;
+
+                    // 如果獎項還有剩餘，詢問是否要繼續抽同一個獎項
+                    if (selectedPrize.RemainingQuantity > 0)
+                    {
+                        Console.Write("\n是否要繼續抽同一個獎項？(Y/N): ");
+                        continueSamePrize = Console.ReadLine()?.ToUpper() == "Y";
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n該獎項已抽完");
+                        continueSamePrize = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"抽獎失敗: {ex.Message}");
                     continue;
                 }
             }
 
-            try
-            {
-                // 執行抽獎
-                var winners = lotteryService.Draw(selectedEvent, selectedPrize, drawCount);
-
-                Console.WriteLine("\n=== 中獎名單 ===");
-                foreach (var winner in winners)
-                {
-                    Console.WriteLine($"履歷編號: {winner.Id}, 姓名: {winner.Name}, 年齡: {winner.Age}, 已中獎次數: {winner.WinCount}");
-                }
-
-                Console.WriteLine($"\n獎項 {selectedPrize.Name} 剩餘數量: {selectedPrize.RemainingQuantity}/{selectedPrize.TotalQuantity}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"抽獎失敗: {ex.Message}");
-                continue;
-            }
-
-            Console.Write("\n是否要繼續抽獎？(Y/N): ");
+            Console.Write("\n是否要選擇其他獎項繼續抽獎？(Y/N): ");
             if (Console.ReadLine()?.ToUpper() != "Y")
             {
                 break;
