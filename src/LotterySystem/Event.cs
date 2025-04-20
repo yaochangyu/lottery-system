@@ -72,7 +72,7 @@ public class Event
     /// <returns>如果參與者符合中獎資格則返回 true，否則返回 false</returns>
     public bool CanParticipantWin(Participant participant)
     {
-        return LotteryRule.CanWin(participant);
+        return LotteryRule.CanParticipantWin(participant);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public class Event
     /// <returns>符合中獎資格的參與者列表</returns>
     public List<Participant> GetEligibleParticipants()
     {
-        return Participants.Where(p => CanParticipantWin(p)).ToList();
+        return Participants.Where(CanParticipantWin).ToList();
     }
 
     /// <summary>

@@ -10,5 +10,5 @@ public interface ILotteryRule
     /// </summary>
     /// <param name="participant">參與者實例</param>
     /// <returns>如果參與者符合中獎資格則返回 true，否則返回 false</returns>
-    bool CanWin(Participant participant);
+    bool CanParticipantWin(Participant participant);
 }

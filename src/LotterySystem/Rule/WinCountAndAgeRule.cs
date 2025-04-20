@@ -38,7 +38,7 @@ public class WinCountAndAgeRule : ILotteryRule
     /// </summary>
     /// <param name="participant">參與者實例</param>
     /// <returns>如果參與者的中獎次數小於最大中獎次數且年齡在限制範圍內則返回 true，否則返回 false</returns>
-    public bool CanWin(Participant participant)
+    public bool CanParticipantWin(Participant participant)
     {
         return participant.WinCount < MaxWinCount &&
                participant.Age >= MinAge &&
